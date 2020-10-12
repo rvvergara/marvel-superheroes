@@ -2,7 +2,7 @@ const helpers = require('../utils/helpers');
 
 const apiHelper = require('../utils/axiosRequest');
 
-const { marvelUrl } = require('../utils/constants');
+const { marvelUrl, charactersPerPage } = require('../utils/constants');
 
 const { generateHash, generateTs } = helpers;
 
@@ -14,9 +14,8 @@ exports.index = async (req, res) => {
   const ts = generateTs();
   const hash = generateHash(ts);
   const page = req.query.page || 1;
-  const limit = req.query.limit || 10;
-  const offset = (page - 1) * limit;
-  const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}`;
+  const offset = (page - 1) * charactersPerPage + 1;
+  const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${charactersPerPage}&offset=${offset}`;
 
   try {
     const response = await fetchData(`${marvelUrl}${path}`);
