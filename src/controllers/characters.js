@@ -15,14 +15,28 @@ exports.index = async (req, res) => {
   const hash = generateHash(ts);
   const page = req.query.page || 1;
   const offset = (page - 1) * charactersPerPage + 1;
-  const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${charactersPerPage}&offset=${offset}`;
+  const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${charactersPerPage}&offset=${offset}&orderBy=modified`;
 
   try {
     const response = await fetchData(`${marvelUrl}${path}`);
 
-    const ids = response.data.results.map(char => char.id);
+    const { data } = response;
 
-    res.status(200).send(`Here is your array -> ${ids}`);
+    const { results, total, limit } = data;
+
+    const characterIds = results.map(char => char.id);
+
+    const totalPages = Math.ceil(total / limit);
+
+    const charactersData = {
+      total,
+      limit,
+      characterIds,
+      page,
+      totalPages,
+    };
+
+    res.status(200).send(charactersData);
   } catch (error) {
     res.status(500).send('Something went wrong');
   }
