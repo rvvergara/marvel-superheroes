@@ -29,11 +29,16 @@ app.get('/', async (req, res) => {
 app.get('/characters', async (req, res) => {
   const ts = generateTs();
   const hash = generateHash(ts);
-  const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=100`;
+  const page = 500;
+  const limit = 10;
+  const offset = (page - 1) * limit;
+  const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}`;
 
   const response = await axios.get(`${marvelURL}${path}`);
 
   const ids = response.data.data.results.map(char => char.id);
+
+  console.log('RESPONSE HERE', response.data.data);
 
   res.send(`Here is your array -> ${ids}`);
 });
