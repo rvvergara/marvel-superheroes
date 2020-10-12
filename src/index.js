@@ -18,7 +18,7 @@ const generateTs = () => new Date().getTime();
 
 const privateKey = process.env.PRIVATE_KEY;
 
-const generateHash = (ts) => CryptoJS.MD5(`${generateTs()}${privateKey}${publicKey}`);
+const generateHash = (ts) => CryptoJS.MD5(`${ts}${privateKey}${publicKey}`);
 
 app.use(express.json());
 
@@ -29,8 +29,8 @@ app.get('/', async (req, res) => {
 app.get('/characters', async (req, res) => {
   const ts = generateTs();
   const hash = generateHash(ts);
-  const page = 500;
-  const limit = 10;
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
   const offset = (page - 1) * limit;
   const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}`;
 
@@ -38,9 +38,24 @@ app.get('/characters', async (req, res) => {
 
   const ids = response.data.data.results.map(char => char.id);
 
-  console.log('RESPONSE HERE', response.data.data);
-
   res.send(`Here is your array -> ${ids}`);
+});
+
+app.get('/characters/:id', async (req, res) => {
+  const ts = generateTs();
+  const hash = generateHash(ts);
+
+  const path = `/v1/public/characters/${req.params.id}?ts=${ts}&apikey=${publicKey}&hash=${hash}`;
+
+  const response = await axios.get(`${marvelURL}${path}`);
+
+  const character = response.data.data.results[0];
+
+  const { id, name, description } = character;
+
+  const charProfile = { id, name, description };
+
+  res.status(200).send(charProfile);
 });
 
 app.listen(port, () => {
