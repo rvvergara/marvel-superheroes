@@ -1,0 +1,36 @@
+{
+  "name": "marvel-superheroes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rvvergara/marvel-superheroes.git"
+  },
+  "keywords": [
+    "node-js",
+    "express",
+    "api",
+    "marvel"
+  ],
+  "author": "Ryan Vergara",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rvvergara/marvel-superheroes/issues"
+  },
+  "homepage": "https://github.com/rvvergara/marvel-superheroes#readme",
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.4"
+  }
+}
