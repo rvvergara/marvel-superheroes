@@ -1,4 +1,7 @@
+/* eslint-disable radix */
 const helpers = require('../utils/helpers');
+
+const JsonResponse = require('../utils/response');
 
 const apiHelper = require('../utils/axiosRequest');
 
@@ -10,10 +13,10 @@ const { fetchData } = apiHelper;
 
 const publicKey = process.env.PUBLIC_KEY;
 
-exports.index = async (req, res) => {
+exports.index = async (req, res, next) => {
   const ts = generateTs();
   const hash = generateHash(ts);
-  const page = req.query.page || 1;
+  const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * charactersPerPage + 1;
   const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${charactersPerPage}&offset=${offset}&orderBy=modified`;
 
@@ -36,13 +39,18 @@ exports.index = async (req, res) => {
       totalPages,
     };
 
-    res.status(200).send(charactersData);
+    res.locals = {
+      data: charactersData,
+      code: response.code,
+    };
+
+    return next();
   } catch (error) {
-    res.status(500).send('Something went wrong');
+    return JsonResponse.errorResponse(req, res, error);
   }
 };
 
-exports.show = async (req, res) => {
+exports.show = async (req, res, next) => {
   const ts = generateTs();
   const hash = generateHash(ts);
 
@@ -57,8 +65,13 @@ exports.show = async (req, res) => {
 
     const charProfile = { id, name, description };
 
-    res.status(200).send(charProfile);
+    res.locals = {
+      data: charProfile,
+      code: response.code,
+    };
+
+    return next();
   } catch (error) {
-    res.status(500).send('Something went wrong');
+    return JsonResponse.errorResponse(req, res, error);
   }
 };
