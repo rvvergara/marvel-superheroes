@@ -48,7 +48,7 @@ exports.index = async (req, res, next) => {
   }
 };
 
-exports.show = async (req, res) => {
+exports.show = async (req, res, next) => {
   const ts = generateTs();
   const hash = generateHash(ts);
 
@@ -63,8 +63,14 @@ exports.show = async (req, res) => {
 
     const charProfile = { id, name, description };
 
-    res.status(200).send(charProfile);
+    res.locals = {
+      data: charProfile,
+      code: response.code,
+    };
+
+    return next();
   } catch (error) {
-    res.status(500).send('Something went wrong');
+    const { data } = error.response;
+    return res.status(data.code).send(data.status);
   }
 };

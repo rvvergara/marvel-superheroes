@@ -17,7 +17,11 @@ router.get(
 );
 
 router.get(
-  '/characters/:id', charactersController.show,
+  '/characters/:id',
+  charactersController.show,
+  cache.setIndividualCharacterInCache,
+  cache.getIndividualCharacterFromCache,
+  response.successResponse,
 );
 
 module.exports = router;

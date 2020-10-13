@@ -13,26 +13,49 @@ const setCharactersInCache = (req, res, next) => {
   redisClient.setex(key, 3600, JSON.stringify(data));
 
   return next();
-}
+};
 
-const getCharactersFromCache = async (req, res, next) => {
+const setIndividualCharacterInCache = (req, res, next) => {
+  const { data } = res.locals;
+
+  const key = data.id;
+
+  redisClient.setex(key, 3600, JSON.stringify(data));
+
+  return next();
+};
+
+const getCharactersFromCache = (req, res, next) => {
   const charactersPage = req.query.page || 1;
 
   const key = `charactersPage${charactersPage}`;
 
   redisClient.get(key, (err, data) => {
-    if(err){
-      res.status(500).send(err);
-    } else if(data !== null) {
+    if (err) {
+      return res.status(500).send(err);
+    } if (data !== null) {
       return res.status(200).send(data);
-    } else {
-      return next();
     }
-  })
+    return next();
+  });
+};
 
-}
+const getIndividualCharacterFromCache = (req, res, next) => {
+  const key = req.params.id;
+
+  redisClient.get(key, (err, data) => {
+    if (err) {
+      return res.status(500).send(err);
+    } if (data !== null) {
+      return res.status(200).send(data);
+    }
+    return next();
+  });
+};
 
 module.exports = {
   setCharactersInCache,
-  getCharactersFromCache
-}
+  getCharactersFromCache,
+  setIndividualCharacterInCache,
+  getIndividualCharacterFromCache,
+};
