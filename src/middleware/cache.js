@@ -1,5 +1,7 @@
 const redis = require('redis');
 
+const response = require('../utils/response');
+
 const redisPort = process.env.REDIS_PORT;
 
 const redisClient = redis.createClient(redisPort);
@@ -34,7 +36,11 @@ const getCharactersFromCache = (req, res, next) => {
     if (err) {
       return res.status(500).send(err);
     } if (data !== null) {
-      return res.status(200).send(data);
+      res.locals = {
+        data,
+        code: 200,
+      };
+      return response.responseObject(req, res);
     }
     return next();
   });
@@ -45,9 +51,13 @@ const getIndividualCharacterFromCache = (req, res, next) => {
 
   redisClient.get(key, (err, data) => {
     if (err) {
-      return res.status(500).send(err);
+      return response.errorResponse(req, res, err);
     } if (data !== null) {
-      return res.status(200).send(data);
+      res.locals = {
+        code: 200,
+        data,
+      };
+      return response.responseObject(req, res);
     }
     return next();
   });

@@ -1,6 +1,8 @@
 /* eslint-disable radix */
 const helpers = require('../utils/helpers');
 
+const JsonResponse = require('../utils/response');
+
 const apiHelper = require('../utils/axiosRequest');
 
 const { marvelUrl, charactersPerPage } = require('../utils/constants');
@@ -44,7 +46,7 @@ exports.index = async (req, res, next) => {
 
     return next();
   } catch (error) {
-    return res.status(500).send(error);
+    return JsonResponse.errorResponse(req, res, error);
   }
 };
 
@@ -70,7 +72,6 @@ exports.show = async (req, res, next) => {
 
     return next();
   } catch (error) {
-    const { data } = error.response;
-    return res.status(data.code).send(data.status);
+    return JsonResponse.errorResponse(req, res, error);
   }
 };

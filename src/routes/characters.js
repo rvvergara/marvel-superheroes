@@ -13,7 +13,7 @@ router.get(
   cache.getCharactersFromCache,
   charactersController.index,
   cache.setCharactersInCache,
-  response.successResponse,
+  response.responseObject,
 );
 
 router.get(
@@ -21,7 +21,7 @@ router.get(
   charactersController.show,
   cache.setIndividualCharacterInCache,
   cache.getIndividualCharacterFromCache,
-  response.successResponse,
+  response.responseObject,
 );
 
 module.exports = router;
