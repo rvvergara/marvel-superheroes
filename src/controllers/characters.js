@@ -1,6 +1,12 @@
+const redis = require('redis');
+
 const helpers = require('../utils/helpers');
 
 const apiHelper = require('../utils/axiosRequest');
+
+const redisPort = process.env.REDIS_PORT;
+
+const redisClient = redis.createClient(redisPort);
 
 const { marvelUrl, charactersPerPage } = require('../utils/constants');
 
@@ -36,9 +42,11 @@ exports.index = async (req, res) => {
       totalPages,
     };
 
+    redisClient.setex(`charactersPage${page}`, 3600, JSON.stringify(charactersData));
+
     res.status(200).send(charactersData);
   } catch (error) {
-    res.status(500).send('Something went wrong');
+    res.status(500).send(error);
   }
 };
 
