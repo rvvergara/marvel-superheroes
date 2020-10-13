@@ -4,8 +4,20 @@ const router = new express.Router();
 
 const charactersController = require('../controllers/characters');
 
-router.get('/characters', charactersController.index);
+const cache = require('../middleware/cache');
 
-router.get('/characters/:id', charactersController.show);
+const response = require('../utils/response');
+
+router.get(
+  '/characters',
+  cache.getCharactersFromCache,
+  charactersController.index,
+  cache.setCharactersInCache,
+  response.successResponse,
+);
+
+router.get(
+  '/characters/:id', charactersController.show,
+);
 
 module.exports = router;

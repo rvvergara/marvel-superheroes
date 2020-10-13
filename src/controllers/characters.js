@@ -1,12 +1,7 @@
-const redis = require('redis');
-
+/* eslint-disable radix */
 const helpers = require('../utils/helpers');
 
 const apiHelper = require('../utils/axiosRequest');
-
-const redisPort = process.env.REDIS_PORT;
-
-const redisClient = redis.createClient(redisPort);
 
 const { marvelUrl, charactersPerPage } = require('../utils/constants');
 
@@ -16,10 +11,10 @@ const { fetchData } = apiHelper;
 
 const publicKey = process.env.PUBLIC_KEY;
 
-exports.index = async (req, res) => {
+exports.index = async (req, res, next) => {
   const ts = generateTs();
   const hash = generateHash(ts);
-  const page = req.query.page || 1;
+  const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * charactersPerPage + 1;
   const path = `/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${charactersPerPage}&offset=${offset}&orderBy=modified`;
 
@@ -42,11 +37,14 @@ exports.index = async (req, res) => {
       totalPages,
     };
 
-    redisClient.setex(`charactersPage${page}`, 3600, JSON.stringify(charactersData));
+    res.locals = {
+      data: charactersData,
+      code: response.code,
+    };
 
-    res.status(200).send(charactersData);
+    return next();
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
