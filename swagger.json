@@ -1,0 +1,135 @@
+{
+  "swagger": "2.0",
+
+  "info": {
+    "title": "Marvel Superheroes Basic API",
+    "version": "1.0",
+    "description": "A simple expressJS API which connects to the Marvel Developer's API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Characters",
+      "description": "API for Marvel characters"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/characters": {
+      "get": {
+        "tags": [
+          "Characters"
+        ],
+        "summary": "Returns a list of all Marvel Characters",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Desired page of results. If not specified defaults to 1"
+
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Characters"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/characters/{characterId}": {
+      "get": {
+        "tags": ["Specific Character"],
+        "summary": "Fetches the details of a specific Marvel Character",
+        "parameters": [
+          {
+            "name": "characterId",
+            "in": "path",
+            "required": true,
+            "description": "Numeric ID of the Marvel Character"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Specific-Character"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: Not Found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Characters": {
+      "properties": {
+        "total": {
+          "type": "integer",
+          "description": "Total number of characters in the Marvel database"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Specified limit of characters queried per page. This can be changed in the .env file. Marvel only allows max of 100 characters per request. So make sure you don't specify more than 100 in the .env file"
+        },
+        "characterIds": {
+          "type": "array",
+          "description": "An array of each character's numeric ID's",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page you want to query."
+        },
+        "totalPages": {
+          "type": "integer",
+          "description": "Total number of pages you can query."
+        }
+      }
+    },
+    "Specific-Character": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Numeric ID of the Marvel Character"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Marvel Character"
+        },
+        "description": {
+          "type": "string",
+          "description": "A backstory of this character."
+        }
+      }
+    }
+  }
+}
