@@ -57,6 +57,8 @@ Once you have successfully installed all dependencies and have your `.env` file 
 npm start
 ```
 
+Also ensure your redis server is running. Please check Redis documentation for more information.
+
 In order to test the API and also view it's documentation please open `localhost:8080/api-docs` in your browser.
 
 ## Technologies Used
